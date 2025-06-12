@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Narayone">
         <activity
-            android:name=".MainActivity"
+            android:name="ru.narayone.app.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Narayone">
             <intent-filter>
