@@ -48,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature-auth"))
     implementation(project(":feature-main"))
     implementation(project(":feature-map"))
     implementation(project(":feature-house-detail"))
