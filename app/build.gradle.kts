@@ -49,6 +49,8 @@ android {
 
 dependencies {
     implementation(project(":feature-main"))
+    implementation(project(":feature-map"))
+    implementation(project(":feature-house-detail"))
     
     // Основные зависимости для Compose
     implementation(libs.androidx.core.ktx)
@@ -59,4 +61,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    
+    // Тестовые зависимости
+    testImplementation("junit:junit:4.13.2")
 }
