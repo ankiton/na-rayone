@@ -30,19 +30,19 @@ class MainActivity : ComponentActivity() {
                     when (currentScreen) {
                         Screen.Welcome -> {
                             WelcomeScreen(
-                                onContinueClick = { currentScreen = Screen.Login }
+                                onNavigateToLogin = { currentScreen = Screen.Login }
                             )
                         }
                         Screen.Login -> {
                             LoginScreen(
-                                onLoginClick = { currentScreen = Screen.Main },
-                                onSignUpClick = { currentScreen = Screen.SignUp }
+                                onNavigateToMain = { currentScreen = Screen.Main },
+                                onNavigateToSignUp = { currentScreen = Screen.SignUp }
                             )
                         }
                         Screen.SignUp -> {
                             SignUpScreen(
-                                onCreateAccountClick = { currentScreen = Screen.Main },
-                                onLoginClick = { currentScreen = Screen.Login }
+                                onNavigateToMain = { currentScreen = Screen.Main },
+                                onNavigateToLogin = { currentScreen = Screen.Login }
                             )
                         }
                         Screen.Main -> {
