@@ -22,14 +22,22 @@ import ru.narayone.sharedui.theme.*
 
 @Composable
 fun SignUpScreen(
+    fullName: String = "",
+    email: String = "",
+    password: String = "",
+    confirmPassword: String = "",
+    agreeToTerms: Boolean = false,
+    isLoading: Boolean = false,
+    error: String? = null,
+    onFullNameChange: (String) -> Unit = {},
+    onEmailChange: (String) -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
+    onConfirmPasswordChange: (String) -> Unit = {},
+    onAgreeToTermsChange: (Boolean) -> Unit = {},
+    onSignUpClick: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
     onNavigateToMain: () -> Unit = {}
 ) {
-    var fullName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var agreeToTerms by remember { mutableStateOf(false) }
     
     Box(
         modifier = Modifier.fillMaxSize()
@@ -103,7 +111,7 @@ fun SignUpScreen(
                             
                             BasicTextField(
                                 value = fullName,
-                                onValueChange = { fullName = it },
+                                onValueChange = { onFullNameChange(it) },
                                 textStyle = androidx.compose.ui.text.TextStyle(
                                     fontSize = 16.sp,
                                     color = Color.Black
@@ -148,7 +156,7 @@ fun SignUpScreen(
                             
                             BasicTextField(
                                 value = email,
-                                onValueChange = { email = it },
+                                onValueChange = { onEmailChange(it) },
                                 textStyle = androidx.compose.ui.text.TextStyle(
                                     fontSize = 16.sp,
                                     color = Color.Black
@@ -193,7 +201,7 @@ fun SignUpScreen(
                             
                             BasicTextField(
                                 value = password,
-                                onValueChange = { password = it },
+                                onValueChange = { onPasswordChange(it) },
                                 visualTransformation = PasswordVisualTransformation(),
                                 textStyle = androidx.compose.ui.text.TextStyle(
                                     fontSize = 16.sp,
@@ -239,7 +247,7 @@ fun SignUpScreen(
                             
                             BasicTextField(
                                 value = confirmPassword,
-                                onValueChange = { confirmPassword = it },
+                                onValueChange = { onConfirmPasswordChange(it) },
                                 visualTransformation = PasswordVisualTransformation(),
                                 textStyle = androidx.compose.ui.text.TextStyle(
                                     fontSize = 16.sp,
@@ -264,7 +272,7 @@ fun SignUpScreen(
                     ) {
                         Checkbox(
                             checked = agreeToTerms,
-                            onCheckedChange = { agreeToTerms = it },
+                            onCheckedChange = { onAgreeToTermsChange(it) },
                             colors = CheckboxDefaults.colors(
                                 checkedColor = CoralPrimary,
                                 uncheckedColor = GrayText
@@ -281,7 +289,8 @@ fun SignUpScreen(
                 
                 // Кнопка Sign Up
                 Button(
-                    onClick = onNavigateToMain,
+                    onClick = onSignUpClick,
+                    enabled = !isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
@@ -290,12 +299,19 @@ fun SignUpScreen(
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.sign_in_zareg),
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(id = R.string.sign_in_zareg),
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
                 
                 // Ссылка на вход

@@ -11,38 +11,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import ru.narayone.featureauth.WelcomeScreen
-import ru.narayone.featureauth.LoginScreen
-import ru.narayone.featureauth.SignUpScreen
+import dagger.hilt.android.AndroidEntryPoint
+import ru.narayone.featureauth.presentation.screens.AuthScreens
 import ru.narayone.featurehousedetail.HouseDetailScreen
 import ru.narayone.featuremap.MapScreen
 import ru.narayone.featuremain.MainScreen
+import ru.narayone.sharedui.theme.NaRayoneTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            NaRayoneTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    var currentScreen by remember { mutableStateOf<Screen>(Screen.Welcome) }
+                    var currentScreen by remember { mutableStateOf<Screen>(Screen.Auth) }
                     var selectedHouseId by remember { mutableStateOf<String?>(null) }
                     
                     when (currentScreen) {
-                        Screen.Welcome -> {
-                            WelcomeScreen(
-                                onNavigateToLogin = { currentScreen = Screen.Login }
-                            )
-                        }
-                        Screen.Login -> {
-                            LoginScreen(
-                                onNavigateToMain = { currentScreen = Screen.Main },
-                                onNavigateToSignUp = { currentScreen = Screen.SignUp }
-                            )
-                        }
-                        Screen.SignUp -> {
-                            SignUpScreen(
-                                onNavigateToMain = { currentScreen = Screen.Main },
-                                onNavigateToLogin = { currentScreen = Screen.Login }
+                        Screen.Auth -> {
+                            AuthScreens(
+                                onNavigateToMain = { currentScreen = Screen.Main }
                             )
                         }
                         Screen.Main -> {
@@ -74,9 +63,7 @@ class MainActivity : ComponentActivity() {
 }
 
 sealed class Screen {
-    object Welcome : Screen()
-    object Login : Screen()
-    object SignUp : Screen()
+    object Auth : Screen()
     object Main : Screen()
     object Map : Screen()
     object HouseDetail : Screen()

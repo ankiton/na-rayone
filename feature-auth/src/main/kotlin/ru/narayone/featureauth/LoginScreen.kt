@@ -22,12 +22,18 @@ import ru.narayone.sharedui.theme.*
 
 @Composable
 fun LoginScreen(
+    email: String = "",
+    password: String = "",
+    rememberMe: Boolean = false,
+    isLoading: Boolean = false,
+    error: String? = null,
+    onEmailChange: (String) -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
+    onRememberMeChange: (Boolean) -> Unit = {},
+    onLoginClick: () -> Unit = {},
     onNavigateToSignUp: () -> Unit = {},
     onNavigateToMain: () -> Unit = {}
 ) {
-    var email by remember { mutableStateOf("demo@email.com") }
-    var password by remember { mutableStateOf("") }
-    var rememberMe by remember { mutableStateOf(false) }
     
     Box(
         modifier = Modifier.fillMaxSize()
@@ -101,7 +107,7 @@ fun LoginScreen(
                             
                             BasicTextField(
                                 value = email,
-                                onValueChange = { email = it },
+                                onValueChange = { onEmailChange(it) },
                                 textStyle = androidx.compose.ui.text.TextStyle(
                                     fontSize = 16.sp,
                                     color = Color.Black
@@ -146,7 +152,7 @@ fun LoginScreen(
                             
                             BasicTextField(
                                 value = password,
-                                onValueChange = { password = it },
+                                onValueChange = { onPasswordChange(it) },
                                 visualTransformation = PasswordVisualTransformation(),
                                 textStyle = androidx.compose.ui.text.TextStyle(
                                     fontSize = 16.sp,
@@ -176,7 +182,7 @@ fun LoginScreen(
                         ) {
                             Checkbox(
                                 checked = rememberMe,
-                                onCheckedChange = { rememberMe = it },
+                                onCheckedChange = { onRememberMeChange(it) },
                                 colors = CheckboxDefaults.colors(
                                     checkedColor = CoralPrimary,
                                     uncheckedColor = GrayText
@@ -200,7 +206,8 @@ fun LoginScreen(
                 
                 // Кнопка Login
                 Button(
-                    onClick = onNavigateToMain,
+                    onClick = onLoginClick,
+                    enabled = !isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
@@ -209,12 +216,19 @@ fun LoginScreen(
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.login),
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(id = R.string.login),
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
                 
                 // Ссылка на регистрацию
