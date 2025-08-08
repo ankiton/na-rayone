@@ -36,11 +36,14 @@ fun SignUpScreen(
     onAgreeToTermsChange: (Boolean) -> Unit = {},
     onSignUpClick: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
-    onNavigateToMain: () -> Unit = {}
+    onNavigateToMain: () -> Unit = {},
+    onBackClick: () -> Unit = {}
 ) {
     
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
         // Белая область с контентом
         Box(
@@ -337,14 +340,29 @@ fun SignUpScreen(
                 }
             }
         }
-        
-        // Векторный фон поверх всего (содержит волнистую границу)
+
+        // Фоновый рисунок (рисуется над контентом)
         Image(
             painter = painterResource(id = R.drawable.bgimage_signup),
             contentDescription = "Background Pattern",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds
         )
+
+        // Стрелка назад (самая верхняя, ниже статус-бара)
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .statusBarsPadding()
+                .padding(start = 12.dp, top = 12.dp)
+                .align(Alignment.TopStart)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_back),
+                contentDescription = "Back",
+                tint = Color.Black
+            )
+        }
     }
 }
 

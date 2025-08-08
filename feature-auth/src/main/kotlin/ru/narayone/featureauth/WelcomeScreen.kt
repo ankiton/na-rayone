@@ -25,7 +25,9 @@ fun WelcomeScreen(
     onNavigateToSignUp: () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
         // Белая область с контентом
         Box(
@@ -131,8 +133,8 @@ fun WelcomeScreen(
                 }
             }
         }
-        
-        // Векторный фон поверх всего (содержит волнистую границу)
+
+        // Фоновая картинка
         Image(
             painter = painterResource(id = R.drawable.bgimage_welcome),
             contentDescription = "Background Pattern",

@@ -10,6 +10,7 @@ sealed class AuthEffect {
     // Навигация
     object NavigateToLogin : AuthEffect()
     object NavigateToSignUp : AuthEffect()
+    object NavigateToWelcome : AuthEffect()
     object NavigateToMain : AuthEffect()
     
     // Успешная аутентификация

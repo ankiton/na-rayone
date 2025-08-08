@@ -11,6 +11,7 @@ sealed class AuthIntent {
     // Навигация
     object NavigateToLogin : AuthIntent()
     object NavigateToSignUp : AuthIntent()
+    object NavigateToWelcome : AuthIntent()
     object NavigateToMain : AuthIntent()
     
     // Вход
