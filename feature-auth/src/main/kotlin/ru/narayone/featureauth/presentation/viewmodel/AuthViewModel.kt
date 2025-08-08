@@ -43,6 +43,7 @@ class AuthViewModel @Inject constructor(
             // Навигация
             is AuthIntent.NavigateToLogin -> navigateToLogin()
             is AuthIntent.NavigateToSignUp -> navigateToSignUp()
+            is AuthIntent.NavigateToWelcome -> navigateToWelcome()
             is AuthIntent.NavigateToMain -> navigateToMain()
             
             // Вход
@@ -77,6 +78,13 @@ class AuthViewModel @Inject constructor(
             is AuthIntent.UpdateSignUpPassword -> updateSignUpPassword(intent.password)
             is AuthIntent.UpdateSignUpConfirmPassword -> updateSignUpConfirmPassword(intent.confirmPassword)
             is AuthIntent.UpdateSignUpAgreeToTerms -> updateSignUpAgreeToTerms(intent.agreeToTerms)
+        }
+    }
+    
+    private fun navigateToWelcome() {
+        _state.update { it.copy(currentScreen = AuthScreen.Welcome) }
+        viewModelScope.launch {
+            _effect.emit(AuthEffect.NavigateToWelcome)
         }
     }
     

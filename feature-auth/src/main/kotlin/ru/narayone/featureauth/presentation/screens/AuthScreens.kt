@@ -97,6 +97,9 @@ fun AuthScreens(
                 },
                 onNavigateToMain = {
                     viewModel.processIntent(AuthIntent.NavigateToMain)
+                },
+                onBackClick = {
+                    viewModel.processIntent(AuthIntent.NavigateToWelcome)
                 }
             )
         }
@@ -140,6 +143,9 @@ fun AuthScreens(
                 },
                 onNavigateToMain = {
                     viewModel.processIntent(AuthIntent.NavigateToMain)
+                },
+                onBackClick = {
+                    viewModel.processIntent(AuthIntent.NavigateToLogin)
                 }
             )
         }
