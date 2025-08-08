@@ -23,6 +23,7 @@ rootProject.name = "na-rayone"
 include(":app")
 include(":core:common")
 include(":core:network")
+include(":feature-auth")
 include(":feature-main")
 include(":feature-map")
 include(":feature-house-detail")

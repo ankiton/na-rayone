@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -45,9 +46,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
 }
 
 dependencies {
+    implementation(project(":shared-ui"))
+    implementation(project(":feature-auth"))
     implementation(project(":feature-main"))
     implementation(project(":feature-map"))
     implementation(project(":feature-house-detail"))
@@ -61,6 +68,13 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    
+    // Hilt для dependency injection
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    
+    // JavaPoet (совместимость с Hilt-агрегацией)
+    implementation(libs.javapoet)
     
     // Тестовые зависимости
     testImplementation("junit:junit:4.13.2")

@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -29,6 +28,11 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    composeOptions {
+        // Используем версию компилятор-расширения, совместимую с Kotlin 1.9.22
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 }
 
