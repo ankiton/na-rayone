@@ -15,7 +15,7 @@ val OnBackground = Color.White
 val OnSurface = Color.White
 
 // Цвета для экранов авторизации
-val CoralPrimary = Color(0xFFFF6B6B)
+val CoralPrimary = Color(0xFF2C75FF)
 val CoralLight = Color(0xFF2C75FF)
 val CoralIconButton = Color(0xFF2C75FF) // Светлый коралловый для иконки кнопки
 val CoralBackground = Color(0xFFFF7979)

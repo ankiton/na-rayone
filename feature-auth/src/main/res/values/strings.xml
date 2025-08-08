@@ -2,7 +2,7 @@
 <resources>
     <string name="welcome">Здравствуйте!</string>
     <string name="continue_welcom">Продолжить</string>
-    <string name="we_are_glad_to_see_you_again_enter_your_login_details">Мы рады видеть вас снова! Введите свои данные для входа.</string>
+    <string name="we_are_glad_to_see_you_again_enter_your_login_details">Мы рады видеть вас снова!\nВведите свои данные для входа.</string>
 
     <string name="sign_in">Войти</string>
     <string name="email">Email</string>

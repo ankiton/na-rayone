@@ -97,7 +97,7 @@ fun WelcomeScreen(
                                 modifier = Modifier
                                     .size(30.dp)
                                     .clip(CircleShape)
-                                    .background(CoralIconButton),
+                                    .background(OnBackground),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(

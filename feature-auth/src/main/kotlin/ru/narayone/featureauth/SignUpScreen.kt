@@ -360,7 +360,7 @@ fun SignUpScreen(
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_back),
                 contentDescription = "Back",
-                tint = Color.Black
+                tint = Color.White
             )
         }
     }
