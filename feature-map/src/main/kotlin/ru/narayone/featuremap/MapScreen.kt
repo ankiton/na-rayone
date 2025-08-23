@@ -6,6 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -23,7 +24,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
@@ -132,18 +135,33 @@ fun IsometricDistrictMap(
     onHouseClick: (House) -> Unit,
     selectedHouse: House?
 ) {
-    val houses = remember {
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
+    val streets = remember {
+        listOf(
+            Street("ул. Владимира Селедкина", 0f),
+            Street("ул. Владимира Ацуты", 500f),
+            Street("ул. Бориса Стругацкого", 1000f)
+        )
+    }
+
+    val houses = remember(streets) {
         val houseWidth = 80f
         val houseHeight = 70f
         val xSpacing = 100f
         val startX = 40f
-        val topY = 250f
-        val bottomY = 460f
-
-        (0..8).map { i ->
-            House("${i + 1}", "ул. Верхняя, ${2 + i * 2}", HouseType.values()[i % 3], Offset(startX + i * xSpacing, topY), houseWidth, houseHeight)
-        } + (0..8).map { i ->
-            House("${i + 10}", "ул. Нижняя, ${2 + i * 2}", HouseType.values()[(i + 1) % 3], Offset(startX + i * xSpacing, bottomY), houseWidth, houseHeight)
+        
+        streets.flatMapIndexed { streetIndex, street ->
+            val topY = 250f + street.yOffset
+            val bottomY = 460f + street.yOffset
+            val topRow = (0..8).map { i ->
+                House("s${streetIndex}_t${i + 1}", "ул. Верхняя, ${2 + i * 2}", HouseType.values()[i % 3], Offset(startX + i * xSpacing, topY), houseWidth, houseHeight)
+            }
+            val bottomRow = (0..8).map { i ->
+                House("s${streetIndex}_b${i + 1}", "ул. Нижняя, ${2 + i * 2}", HouseType.values()[(i + 1) % 3], Offset(startX + i * xSpacing, bottomY), houseWidth, houseHeight)
+            }
+            topRow + bottomRow
         }
     }
 
@@ -151,22 +169,42 @@ fun IsometricDistrictMap(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
+                detectTransformGestures { centroid, pan, zoom, _ ->
+                    val oldScale = scale
+                    val newScale = (scale * zoom).coerceIn(0.5f, 3f)
+                    
+                    // Restore pan and centered zoom, temporarily removing boundaries to debug the movement issue.
+                    offset = (offset - centroid) * (newScale / oldScale) + centroid + pan
+                    scale = newScale
+                }
+            }
+            .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = { offset ->
-                        checkIfHouseClicked(offset, houses, onHouseClick)
+                    onTap = { tapOffset ->
+                        val transformedOffset = (tapOffset - offset) / scale
+                        checkIfHouseClicked(transformedOffset, houses, onHouseClick)
                     }
                 )
+            }
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+                translationX = offset.x
+                translationY = offset.y
             }
     ) {
         // Рисуем фон - зеленую траву
         drawRect(
             color = Color(0xFF8BC34A),
             topLeft = Offset.Zero,
-            size = Size(size.width, size.height)
+            size = Size(1000f, 1550f) 
         )
         
-        // Рисуем дороги
-        drawRoads()
+        // Рисуем дороги и деревья для всех улиц
+        streets.forEach { street ->
+            drawRoad(street)
+            drawTreesForStreet(street.yOffset)
+        }
         
         // Рисуем дома
         houses.forEach { house ->
@@ -187,17 +225,17 @@ fun IsometricDistrictMap(
                 }
             }
         }
-        
-        // Рисуем деревья и элементы ландшафта
-        drawTrees()
     }
 }
 
-private fun DrawScope.drawRoads() {
+private fun DrawScope.drawRoad(street: Street) {
+    val roadTopY = 350f + street.yOffset
+    val roadTextY = 395f + street.yOffset
+    
     // Рисуем главную дорогу
     drawRect(
         color = Color(0xFFBDB9A6), // Цвет асфальта
-        topLeft = Offset(0f, 350f),
+        topLeft = Offset(0f, roadTopY),
         size = Size(size.width, 80f)
     )
 
@@ -205,7 +243,7 @@ private fun DrawScope.drawRoads() {
     val dashWidth = 25f
     val dashGap = 15f
     val startX = 20f
-    val centerY = 390f
+    val centerY = roadTopY + 40f
     
     var currentX = startX
     while (currentX < size.width) {
@@ -226,14 +264,14 @@ private fun DrawScope.drawRoads() {
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "ул. Владимира Селедкина",
+        street.name,
         size.width / 2,
-        395f,
+        roadTextY,
         textPaint
     )
 }
 
-private fun DrawScope.drawTrees() {
+private fun DrawScope.drawTreesForStreet(yOffset: Float) {
     // Рисуем деревья
     val treeLocations = listOf(
         // Верхний ряд деревьев
@@ -242,13 +280,11 @@ private fun DrawScope.drawTrees() {
         // Нижний ряд деревьев
         Offset(100f, 440f), Offset(200f, 440f), Offset(300f, 440f), Offset(400f, 440f),
         Offset(500f, 440f), Offset(600f, 440f), Offset(700f, 440f), Offset(800f, 440f), Offset(900f, 440f)
-    )
+    ).map { it.copy(y = it.y + yOffset) }
     
     treeLocations.forEach { location ->
         drawTree(location)
     }
-    
-    // Кусты убраны, чтобы не мешать
 }
 
 private fun DrawScope.drawTree(location: Offset) {
@@ -459,6 +495,11 @@ private fun checkIfHouseClicked(offset: Offset, houses: List<House>, onHouseClic
 enum class HouseType {
     RED_ROOF, BLACK_ROOF, YELLOW_ROOF
 }
+
+data class Street(
+    val name: String,
+    val yOffset: Float
+)
 
 data class House(
     val id: String,
