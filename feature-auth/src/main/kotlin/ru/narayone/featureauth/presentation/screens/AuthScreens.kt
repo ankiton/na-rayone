@@ -11,6 +11,8 @@ import ru.narayone.featureauth.presentation.mvi.*
 import ru.narayone.featureauth.presentation.viewmodel.AuthViewModel
 import ru.narayone.featureauth.*
 import ru.narayone.sharedui.theme.NaRayoneTheme
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * Главный экран аутентификации с навигацией
@@ -21,6 +23,7 @@ fun AuthScreens(
     onNavigateToMain: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
     
     // Обработка эффектов
     LaunchedEffect(Unit) {
@@ -28,10 +31,10 @@ fun AuthScreens(
             when (effect) {
                 is AuthEffect.NavigateToMain -> onNavigateToMain()
                 is AuthEffect.ShowError -> {
-                    // Здесь можно показать Snackbar или Toast
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
                 is AuthEffect.ShowToast -> {
-                    // Здесь можно показать Toast
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
                 else -> { /* Обработка других эффектов */ }
             }
