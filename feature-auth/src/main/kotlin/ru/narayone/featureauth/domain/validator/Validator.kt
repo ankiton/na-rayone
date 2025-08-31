@@ -28,8 +28,6 @@ class Validator {
         return when {
             password.isBlank() -> ValidationResult.Invalid(ValidationErrors.PASSWORD_EMPTY)
             password.length < 6 -> ValidationResult.Invalid(ValidationErrors.PASSWORD_TOO_SHORT)
-            !password.any { it.isLetter() } || !password.any { it.isDigit() } -> 
-                ValidationResult.Invalid(ValidationErrors.PASSWORD_TOO_WEAK)
             else -> ValidationResult.Valid
         }
     }

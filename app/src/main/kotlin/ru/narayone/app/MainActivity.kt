@@ -15,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.narayone.featureauth.presentation.screens.AuthScreens
 import ru.narayone.featurehousedetail.HouseDetailScreen
 import ru.narayone.featuremap.MapScreen
+import ru.narayone.featurefeed.HomeScreen
 import ru.narayone.featuremain.MainScreen
 import ru.narayone.sharedui.theme.NaRayoneTheme
 
@@ -31,11 +32,16 @@ class MainActivity : ComponentActivity() {
                     when (currentScreen) {
                         Screen.Auth -> {
                             AuthScreens(
-                                onNavigateToMain = { currentScreen = Screen.Main }
+                                onNavigateToMain = { currentScreen = Screen.Home }
                             )
                         }
-                        Screen.Main -> {
-                            MainScreen(onMapClick = { currentScreen = Screen.Map })
+                        Screen.Home -> {
+                            val sample = listOf(
+                                ru.narayone.featurefeed.FeedItem("1", "Сдам 1-к на сутки", "Селедкина / Центр", "1 500 ₽"),
+                                ru.narayone.featurefeed.FeedItem("2", "Продам диван", "Грызодубовой", "7 000 ₽"),
+                                ru.narayone.featurefeed.FeedItem("3", "Репетитор математики", "Южный район", "500 ₽/час")
+                            )
+                            HomeScreen(items = sample)
                         }
                         Screen.Map -> {
                             MapScreen(onHouseClick = { houseId ->
@@ -64,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
 sealed class Screen {
     object Auth : Screen()
-    object Main : Screen()
+    object Home : Screen()
     object Map : Screen()
     object HouseDetail : Screen()
 } 
