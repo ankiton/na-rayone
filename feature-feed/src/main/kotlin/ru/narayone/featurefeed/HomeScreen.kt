@@ -10,8 +10,27 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -33,19 +52,104 @@ data class FeedItem(
 
 @Composable
 fun HomeScreen(items: List<FeedItem>, onItemClick: (FeedItem) -> Unit = {}) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(CoralPrimary)
-            .padding(12.dp)
-    ) {
+    var query by remember { mutableStateOf("") }
+    val filteredItems = remember(query, items) {
+        if (query.isBlank()) items else items.filter {
+            it.title.contains(query, ignoreCase = true) ||
+            it.district.contains(query, ignoreCase = true) ||
+            it.price.contains(query, ignoreCase = true)
+        }
+    }
+
+    var selectedTab by remember { mutableStateOf(0) }
+
+    Scaffold(
+        containerColor = CoralPrimary,
+        bottomBar = {
+            NavigationBar(containerColor = Color(0xFF2A2A2A)) {
+                NavigationBarItem(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    icon = { Icon(imageVector = Icons.Filled.Search, contentDescription = "Поиск", tint = if (selectedTab == 0) CoralPrimary else Color.LightGray) },
+                    label = { Text("Поиск", color = if (selectedTab == 0) CoralPrimary else Color.LightGray) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    icon = { Icon(imageVector = Icons.Filled.FavoriteBorder, contentDescription = "Избранное", tint = Color.LightGray) },
+                    label = { Text("Избранное", color = Color.LightGray) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    icon = {
+                        BadgedBox(badge = { Badge() }) {
+                            Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Объявления", tint = CoralPrimary)
+                        }
+                    },
+                    label = { Text("Объявления", color = CoralPrimary) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
+                    icon = {
+                        BadgedBox(badge = { Badge { Text("1") } }) {
+                            Icon(imageVector = Icons.Filled.Chat, contentDescription = "Сообщения", tint = Color.LightGray)
+                        }
+                    },
+                    label = { Text("Сообщения", color = Color.LightGray) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 4,
+                    onClick = { selectedTab = 4 },
+                    icon = {
+                        BadgedBox(badge = { Badge { Text("7") } }) {
+                            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "Профиль", tint = Color.LightGray)
+                        }
+                    },
+                    label = { Text("Профиль", color = Color.LightGray) }
+                )
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(CoralPrimary)
+                .padding(12.dp)
+                .padding(bottom = innerPadding.calculateBottomPadding())
+        ) {
+        // Top search bar
+        OutlinedTextField(
+            value = query,
+            onValueChange = { query = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
+                .heightIn(min = 48.dp, max = 48.dp),
+            placeholder = { Text(text = "Поиск по объявлениям", color = GrayText) },
+            singleLine = true,
+            trailingIcon = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (query.isNotBlank()) {
+                        androidx.compose.material3.IconButton(onClick = { query = "" }) {
+                            Icon(imageVector = Icons.Filled.Close, contentDescription = "Очистить", tint = GrayText)
+                        }
+                    }
+                    androidx.compose.material3.IconButton(onClick = { query = query.trim() }) {
+                        Icon(imageVector = Icons.Filled.Search, contentDescription = "Найти", tint = GrayText)
+                    }
+                }
+            }
+        )
+
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 180.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(bottom = 12.dp)
         ) {
-            items(items, key = { it.id }) { item ->
+            items(filteredItems, key = { it.id }) { item ->
                 Card(
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -77,6 +181,7 @@ fun HomeScreen(items: List<FeedItem>, onItemClick: (FeedItem) -> Unit = {}) {
                     }
                 }
             }
+        }
         }
     }
 }
